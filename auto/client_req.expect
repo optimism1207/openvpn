@@ -1,0 +1,24 @@
+#!/usr/bin/expect
+
+#written by gx
+
+set name [lindex $argv 0]
+set password [lindex $argv 1]
+
+spawn /etc/openvpn/easy-rsa-c/easyrsa init-pki
+#
+spawn /etc/openvpn/easy-rsa-c/easyrsa gen-req $name
+#
+expect "phrase:"
+#
+send "$password\r"
+#
+expect "Verifying"
+#
+send "$password\r"
+#
+expect "Common Name"
+#
+send "$name\r"
+
+expect eof

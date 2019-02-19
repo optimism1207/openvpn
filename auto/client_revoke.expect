@@ -1,0 +1,24 @@
+#!/usr/bin/expect
+
+#written by gx
+
+set name [lindex $argv 0]
+set password [lindex $argv 1]
+
+spawn /etc/openvpn/easy-rsa/easyrsa revoke $name
+
+expect "revocation:"
+send "yes\r"
+
+expect "phrase:"
+send "$password\r"
+
+expect eof
+
+spawn /etc/openvpn/easy-rsa/easyrsa gen-crl
+
+expect "phrase:"
+send "$password\r"
+
+expect eof
+

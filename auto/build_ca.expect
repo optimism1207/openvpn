@@ -1,0 +1,36 @@
+#!/usr/bin/expect
+
+#written by gx
+
+set server_name [lindex $argv 0]
+set password [lindex $argv 1]
+
+spawn ./easyrsa init-pki
+
+spawn ./easyrsa build-ca
+expect "phrase:"
+send "$password\r"
+expect "Verifying"
+send "$password\r"
+expect "Common Name"
+send "$server_name\r"
+expect eof
+
+spawn "./easyrsa gen-req $server_name nopass"
+expect "Common Name"
+send "$server_name\r"
+expect eof
+
+spawn "./easyrsa sign server $server_name"
+expect "Confirm"
+send "yes\r"
+expect "Enter pass phrase"
+send "$password\r"
+expect eof
+
+spawn "./easyrsa sign gen-dh"
+
+
+
+
+	

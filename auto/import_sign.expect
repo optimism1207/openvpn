@@ -1,0 +1,17 @@
+#!/usr/bin/expect
+
+#written by gx
+
+set name [lindex $argv 0]
+set password [lindex $argv 1]
+
+spawn ./easyrsa import-req /etc/openvpn/easy-rsa-c/pki/reqs/$name.req $name 
+
+
+#签署客户端证书
+spawn ./easyrsa sign client $name
+expect "Confirm"
+send "yes\r"
+expect "/etc/openvpn/easy-rsa/pki/private/ca.key:"
+send "$password\r"
+expect eof
