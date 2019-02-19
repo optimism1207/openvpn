@@ -1,27 +1,25 @@
-#openvpn 配置学习记录
-#证书模式带密码,TUN/UDP
-#环境centos7
+##openvpn 配置学习记录
+##证书模式带密码,TUN/UDP
+##环境centos7
 
-yum install openvpn easy-rsa
-mkdir -p /etc/openvpn/easy-rsa
-cp /usr/share/doc/easy-rsa-3.0.3/vars.example /etc/openvpn/easy-rsa/vars
-cp -r /usr/share/easy-rsa/3.0.3/* /etc/openvpn/easy-rsa
-cp /usr/share/doc/openvpn-2.4.6/sample/sample-config-files/server.conf /etc/openvpn/
+    yum install openvpn easy-rsa
+    mkdir -p /etc/openvpn/easy-rsa
+    cp /usr/share/doc/easy-rsa-3.0.3/vars.example /etc/openvpn/easy-rsa/vars
+    cp -r /usr/share/easy-rsa/3.0.3/* /etc/openvpn/easy-rsa
+    cp /usr/share/doc/openvpn-2.4.6/sample/sample-config-files/server.conf /etc/openvpn/
 
+    cd /etc/openvpn/easy-rsa/
+    ./easyrsa init-pki
 
-cd /etc/openvpn/easy-rsa/
-./easyrsa init-pki
+    ./easyrsa build-ca
+    pem [密码自定义]
+    commonname [server名称自定义]
+    得到/etc/openvpn/easy-rsa/pki/ca.crt
 
-./easyrsa build-ca
-pem [密码自定义]
-commonname [server名称自定义]
-得到/etc/openvpn/easy-rsa/pki/ca.crt
-
-./easyrsa gen-req [server名称自定义] nopass
-common [server名称自定义]
-得到req: /etc/openvpn/easy-rsa/pki/reqs/server.req
-    key: /etc/openvpn/easy-rsa/pki/private/server.key
-    t
+    ./easyrsa gen-req [server名称自定义] nopass
+    common [server名称自定义]
+    得到 req: /etc/openvpn/easy-rsa/pki/reqs/server.req
+        key: /etc/openvpn/easy-rsa/pki/private/server.key
 
     ./easyrsa sign server [server上面定义的名字] 
     pem [密码自定义]
@@ -45,7 +43,8 @@ common [server名称自定义]
     ./easyrsa sign client[必须是client表示客户端] [client与上面一致]
     得到/etc/openvpn/easy-rsa/pki/issued/client.crt
 
-#服务器和客户端证书整理
+##服务器和客户端证书整理
+    
     cp pki/ca.crt /etc/openvpn/server
     cp pki/private/server.key /etc/openvpn/server
     cp pki/issued/server.crt /etc/openvpn/server
@@ -58,7 +57,8 @@ common [server名称自定义]
     cp /etc/openvpn/easy-rsa/ta.key /etc/openvpn/client/
     cp /usr/share/doc/openvpn-2.4.6/sample/sample-config-files/client.conf /etc/openvpn/client
 
-    内核转发
+ ##内核转发
+ 
     编辑 /etc/sysctl.conf 文件,将　net.ipv4.ip_forward = 0　修改为：net.ipv4.ip_forward = 1
     执行sysctl -p
 
@@ -70,23 +70,25 @@ common [server名称自定义]
 
     firewall-cmd --reload
 
-#客户端证书自动生成和吊销脚本
-配置文件通过修改sample.ovpn
-需要安装expect，脚本有点问题，有时要执行两次
-auto文件夹,sever.conf,sample.ovpn放于/etc/openvpn
+##客户端证书自动生成和吊销脚本
+    
+    配置文件通过修改sample.ovpn
+    需要安装expect，脚本有点问题，有时要执行两次
+    auto文件夹,sever.conf,sample.ovpn放于/etc/openvpn
 
-client_status_log.sh 格式化输出当前statuslog
-log.py 跟上面的差不多，练习python3写的
+    client_status_log.sh 格式化输出当前statuslog
+    log.py 跟上面的差不多，练习python3写的
 
-openvpn_connect_history.sh 忘记当初干嘛写这个了，没写完
+    openvpn_connect_history.sh 忘记当初干嘛写这个了，没写完
 
-#分流改进，默认不走tun，走本地，未验证
-客户端添加
+##分流改进，默认不走tun，走本地，未验证
 
-route-nopull
-route x.x.x.x x.x.x.x vpn_gateway
-route x.x.x.x x.x.x.x vpn_gateway
-route x.x.x.x x.x.x.x vpn_gateway
+    客户端添加
+
+    route-nopull
+    route x.x.x.x x.x.x.x vpn_gateway
+    route x.x.x.x x.x.x.x vpn_gateway
+    route x.x.x.x x.x.x.x vpn_gateway
 
 
 
