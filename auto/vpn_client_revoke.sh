@@ -5,9 +5,9 @@
 read -p "Enter the client name to revoke: " name
 read -p "Enter the passwd: " passwd
 
-cd /etc/openvpn/
+cd /etc/openvpn/easy-rsa
 
-/etc/openvpn/auto/client_revoke.expect $name $passwd
+/etc/openvpn/easy-rsa/client_revoke.expect $name $passwd
 
 sleep 1s
 
