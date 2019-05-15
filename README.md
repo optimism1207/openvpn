@@ -73,13 +73,14 @@
 ##客户端证书自动生成和吊销脚本
     
     配置文件通过修改sample.ovpn
-    需要安装expect，脚本有点问题，有时要执行两次
-    auto文件夹,sever.conf,sample.ovpn放于/etc/openvpn
+    需要安装expect，脚本有点问题，vpn_client_build.sh要执行两次才成功，第一次肯定失败
+    auto文件夹里的都要加执行权限，client_revoke.expect要移到/etc/openvpn/easy-rsa/
+    sever.conf,sample.ovpn放于/etc/openvpn
 
     client_status_log.sh 格式化输出当前statuslog
     log.py 跟上面的差不多，练习python3写的
 
-    openvpn_connect_history.sh 忘记当初干嘛写这个了，没写完
+    openvpn_connect_history.sh 忘记当初干嘛写这个了，要统计ip历史好像，没写完
 
 ##分流改进，默认不走tun，走本地，未验证
 
@@ -90,5 +91,15 @@
     route x.x.x.x x.x.x.x vpn_gateway
     route x.x.x.x x.x.x.x vpn_gateway
 
+##带宽改进，实测还是有点用的
+    
+    sndbuf 0
+    rcvbuf 0
+    push 'rcvbuf 393216'
+    push 'rcvbuf 393216'
+
+    txqueuelen 1000
+
+    mssfix 1432
 
 
